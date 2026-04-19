@@ -1377,15 +1377,15 @@ class SwinTransformer(BaseModule):
         for i, stage in enumerate(self.stages):
             x, hw_shape, out, out_hw_shape = stage(x, hw_shape)
             if i == 1:
-                attn = torch.einsum("nbc,mc->nbm", feat15, token)  # gang zhu shi
-                depth_attn = torch.einsum("nbc,mc->nbm", x, token)  # gang zhu shi
+                attn = torch.einsum("nbc,mc->nbm", feat15, token) 
+                depth_attn = torch.einsum("nbc,mc->nbm", x, token) 
                 attn = attn * (384 ** -0.5)
-                depth_attn = depth_attn * (384 ** -0.5)  ##gang zhu shi
-                attn = attn + depth_attn  # gang zhu shi
-                print("attn_shape", attn.shape)  # attn_shape torch.Size([2, 196, 100]) # learnable_tokens 100 384
+                depth_attn = depth_attn * (384 ** -0.5) 
+                attn = attn + depth_attn  
+                print("attn_shape", attn.shape) 
                 delta_f = torch.einsum(
-                    "nbm,mc->nbc", attn, mlp_token2feat(token))  # delta_f 2 196 384   stage3 2 196 384 gangzhu shi
-                delta_f = mlp_delta_f(delta_f + x)  # 2 196 384 # gang zhu shi
+                    "nbm,mc->nbc", attn, mlp_token2feat(token)) 
+                delta_f = mlp_delta_f(delta_f + x)  
                 x = delta_f + x
 
             if i in self.out_indices:
